@@ -20,8 +20,8 @@ Code with MockWebServer path dispatcher
 fun pathCondition() {
     val dispatcher = FixtureDispatcher()
     val factory = PathQueryConditionFactory("/prefix/")
-    dispatcher.putResponse(factory.withPathInfix("infix"), "body_path")
-    dispatcher.putResponse(factory.withPathInfix("another_infix"), "json_object")
+    dispatcher.putResponse(factory.withPathSuffix("suffix"), "body_path")
+    dispatcher.putResponse(factory.withPathSuffix("another_suffix"), "json_object")
     mockWebServer.setDispatcher(dispatcher)
 }
 ```
@@ -31,13 +31,13 @@ fun bareMockWebServer() {
     val dispatcher = object : Dispatcher() {
         override fun dispatch(request: RecordedRequest): MockResponse {
             val path = request.requestUrl.encodedPath()
-            if (path == "/prefix/infix") {
+            if (path == "/prefix/suffix") {
                 return MockResponse()
                         .setResponseCode(404)
                         .addHeader("Content-Type", "text/plain")
                         .addHeader("Vary", "Accept-Encoding")
                         .setBody("""{"test"}""")
-            } else if (path == "/prefix/another_infix") {
+            } else if (path == "/prefix/another_suffix") {
                 return MockResponse()
                         .setResponseCode(200)
                         .addHeader("Content-Type", "application/json")
@@ -58,9 +58,9 @@ fun bareMockWebServer() {
 fun factory() {
     val dispatcher = FixtureDispatcher()
     val factory = PathQueryConditionFactory("/prefix/")
-    dispatcher.putResponse(factory.withPathInfix("infix"), "queryless_response")
-    dispatcher.putResponse(factory.withPathInfixAndQueryParameter("infix", "param"), "response_with_query_parameter")
-    dispatcher.putResponse(factory.withPathInfixAndQueryParameter("infix", "param", "value"), "response_with_query_parameter_and_value")
+    dispatcher.putResponse(factory.withPathSuffix("suffix"), "queryless_response")
+    dispatcher.putResponse(factory.withPathSuffixAndQueryParameter("suffix", "param"), "response_with_query_parameter")
+    dispatcher.putResponse(factory.withPathSuffixAndQueryParameter("suffix", "param", "value"), "response_with_query_parameter_and_value")
     mockWebServer.setDispatcher(dispatcher)
 }
 ```
@@ -70,7 +70,7 @@ fun factory() {
 ```kotlin
 fun pathQueryCondition() {
     val dispatcher = FixtureDispatcher()
-    dispatcher.putResponse(PathQueryCondition("/prefix/infix", "param", "value"), "response_with_query_parameter_and_value")
+    dispatcher.putResponse(PathQueryCondition("/prefix/suffix", "param", "value"), "response_with_query_parameter_and_value")
     mockWebServer.setDispatcher(dispatcher)
     
 }
